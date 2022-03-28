@@ -53,7 +53,7 @@ struct proc {
   char name[16];               // Process name (debugging)
   struct mmapinfo mmaps[MAPSIZE]; //Max MAPSIZE mapping possible
 };
-
+int set_mmap(int length, int fd, int offset);
 // Process memory is laid out contiguously, low addresses first:
 //   text
 //   original data and bss

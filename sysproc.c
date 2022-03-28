@@ -6,6 +6,7 @@
 #include "memlayout.h"
 #include "mmu.h"
 #include "proc.h"
+extern int mmap1(int, int, int);
 int
 sys_fork(void)
 {
@@ -92,6 +93,12 @@ sys_uptime(void)
 int
 sys_mmap(void)
 {
-	return 300;
+	int length = -1;
+	int fd = -1;
+	int offset = -1;
+
+	if(argint(0, &length) < 0 || argint(1, &fd) < 0 || argint(2, &offset) < 0)
+	return -1;
+	return mmap1(length, fd, offset);
 }
 

@@ -532,3 +532,27 @@ procdump(void)
     cprintf("\n");
   }
 }
+
+int mmap1(int length, int fd, int offset) {
+	//allocating pages
+	int map = set_mmap(length, fd, offset);
+	return map;
+	
+}
+
+int set_mmap(int length, int fd, int offset) {
+	struct proc *p = myproc();
+	for(int i = 0; i < MAPSIZE; i++) {
+		if(p->mmaps[i].used == 0) {
+			p->mmaps[i].length = length;
+			p->mmaps[i].fd = fd;
+			p->mmaps[i].offset = offset;
+			p->mmaps[i].used = 1;
+			return 1;
+		}
+		else
+			continue;
+	}
+	return 0;
+
+}
