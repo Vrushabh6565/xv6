@@ -534,25 +534,28 @@ procdump(void)
 }
 
 int mmap1(int length, int fd, int offset) {
-	//allocating pages
+	struct proc *p = myproc();
+	if(!p->mmap_base) {
+		p->mmap_base = KERNBASE - PGSIZE;
+	}
+	p->mmap_base = p->mmap_base - length;
 	int map = set_mmap(length, fd, offset);
 	return map;
-	
 }
 
 int set_mmap(int length, int fd, int offset) {
 	struct proc *p = myproc();
 	for(int i = 0; i < MAPSIZE; i++) {
 		if(p->mmaps[i].used == 0) {
+			p->mmaps[i].addr =(char*) p->mmap_base;
 			p->mmaps[i].length = length;
 			p->mmaps[i].fd = fd;
 			p->mmaps[i].offset = offset;
 			p->mmaps[i].used = 1;
-			return 1;
+			return p->mmap_base;
 		}
 		else
 			continue;
 	}
 	return 0;
-
 }
