@@ -55,6 +55,7 @@ struct proc {
   uint mmap_base;			   //virtual addresss above which mmap is done
 };
 int set_mmap(int length, int fd, int offset);
+int map_pages(struct proc *p, int i);
 // Process memory is laid out contiguously, low addresses first:
 //   text
 //   original data and bss

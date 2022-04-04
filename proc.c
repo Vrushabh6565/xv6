@@ -539,8 +539,16 @@ int mmap1(int length, int fd, int offset) {
 		p->mmap_base = KERNBASE - PGSIZE;
 	}
 	p->mmap_base = p->mmap_base - length;
-	int map = set_mmap(length, fd, offset);
-	return map;
+	p->mmap_base = PGROUNDDOWN(p->mmap_base);
+	int map_i = set_mmap(length, fd, offset);
+	if(map_i != -1) {
+		if(map_pages(p, map_i)) {
+			return p->mmap_base;
+		}
+		else
+			panic("Unable to map");
+	}
+	return p->mmap_base;
 }
 
 int set_mmap(int length, int fd, int offset) {
@@ -552,10 +560,10 @@ int set_mmap(int length, int fd, int offset) {
 			p->mmaps[i].fd = fd;
 			p->mmaps[i].offset = offset;
 			p->mmaps[i].used = 1;
-			return p->mmap_base;
+			return i;
 		}
 		else
 			continue;
 	}
-	return 0;
+	return -1;
 }

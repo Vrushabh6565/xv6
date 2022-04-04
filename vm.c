@@ -385,6 +385,21 @@ copyout(pde_t *pgdir, uint va, void *p, uint len)
   return 0;
 }
 
+int map_pages(struct proc *p, int i) {
+	char* va = p->mmaps[i].addr;
+	int size = p->mmaps[i].length;
+	int pg_req = (size/4096) + 1;
+	char* pa[pg_req];
+	int j = 0;
+	while(j < pg_req) {
+		pa[j] = kalloc();
+		if(mappages(p->pgdir,va, PGSIZE, (uint)V2P(pa[j]), PTE_W) < 0) {
+			panic("mmap map_pages()");
+		}
+		j++;
+	}
+	return 1;
+}
 //PAGEBREAK!
 // Blank page.
 //PAGEBREAK!
