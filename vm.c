@@ -6,6 +6,10 @@
 #include "mmu.h"
 #include "proc.h"
 #include "elf.h"
+#include "fs.h"
+#include "spinlock.h"
+#include "sleeplock.h"
+#include "file.h"
 
 extern char data[];  // defined by kernel.ld
 pde_t *kpgdir;  // for use in scheduler()
@@ -388,14 +392,26 @@ copyout(pde_t *pgdir, uint va, void *p, uint len)
 int map_pages(struct proc *p, int i) {
 	char* va = p->mmaps[i].addr;
 	int size = p->mmaps[i].length;
+	int offset = p->mmaps[i].offset;
+	struct file* f = 0;
+	f = p->ofile[p->mmaps[i].fd];
 	int pg_req = (size/4096) + 1;
 	char* pa[pg_req];
 	int j = 0;
+	int read = 0; 
 	while(j < pg_req) {
 		pa[j] = kalloc();
-		if(mappages(p->pgdir,va, PGSIZE, (uint)V2P(pa[j]), PTE_W) < 0) {
+		if(mappages(p->pgdir,va, PGSIZE, (uint)V2P(pa[j]), PTE_W | PTE_U) < 0) {
 			panic("mmap map_pages()");
 		}
+		memset(pa[j], 0, PGSIZE);
+		ilock(f->ip);
+		if((read = readi(f->ip, pa[j], offset, PGSIZE)) <= 0) {
+			iunlock(f->ip);
+			panic("read panic");
+		}
+		iunlock(f->ip);
+		offset = offset + PGSIZE;
 		j++;
 	}
 	return 1;
