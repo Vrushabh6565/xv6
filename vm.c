@@ -410,7 +410,7 @@ int map_pages(struct proc *p, int i) {
 			n = PGSIZE;
 		}
 		else
-			n = size - offset;
+			n = size;
 		ilock(f->ip);
 		if((read = readi(f->ip, pa[j], offset, n)) <= 0) {
 			iunlock(f->ip);
