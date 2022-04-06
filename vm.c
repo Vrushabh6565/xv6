@@ -405,10 +405,14 @@ int map_pages(struct proc *p, int i) {
 			panic("mmap map_pages()");
 		}
 		memset(pa[j], 0, PGSIZE);
+		int n = 0;
+		if(size - offset >= PGSIZE) {
+			n = PGSIZE;
+		}
+		else
+			n = size - offset;
 		ilock(f->ip);
 		if((read = readi(f->ip, pa[j], offset, n)) <= 0) {
-		ilock(f->ip);
-		if((read = readi(f->ip, pa[j], offset, PGSIZE)) <= 0) {
 			iunlock(f->ip);
 			panic("read panic");
 		}

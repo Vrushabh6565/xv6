@@ -9,7 +9,6 @@ int main(void) {
 	char buff[256];
   	strcpy(buff, addr);
   	printf(1, "%s\n", (char*)buff);
-  	printf(1, "XV6_TEST_OUTPUT : File content from mmap: %s\n", (char*)buff);
 	exit();
 }
 
