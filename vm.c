@@ -420,6 +420,7 @@ int map_pages(struct proc *p, int i) {
 		offset = offset + PGSIZE;
 		j++;
 	}
+	p->mmaps[i].used = 1;
 	return 1;
 }
 //PAGEBREAK!

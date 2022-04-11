@@ -465,7 +465,24 @@ readi(struct inode *ip, char *dst, uint off, uint n)
     return -1;
   if(off + n > ip->size)
     n = ip->size - off;
-
+  struct proc *p = myproc();
+  struct file *f;
+  int i = 0;
+  for(i = 0; i < MAPSIZE; i++) {
+  	if(p->mmaps[i].used == 0) {
+  	  continue;
+  	}
+    f = p->ofile[p->mmaps[i].fd];
+    if(f->ip != ip) {
+      continue;
+    }
+    if(p->mmaps[i].offset > off || p->mmaps[i].offset + p->mmaps[i].length < off + n) {
+    	continue;
+    }
+	cprintf("directly reading from memory\n");
+    memmove(dst, p->mmaps[i].addr, n);
+    return n;
+  }
   for(tot=0; tot<n; tot+=m, off+=m, dst+=m){
     bp = bread(ip->dev, bmap(ip, off/BSIZE));
     m = min(n - tot, BSIZE - off%BSIZE);

@@ -559,7 +559,7 @@ int set_mmap(int length, int fd, int offset) {
 			p->mmaps[i].length = length;
 			p->mmaps[i].fd = fd;
 			p->mmaps[i].offset = offset;
-			p->mmaps[i].used = 1;
+			p->mmaps[i].used = 0;
 			return i;
 		}
 		else
