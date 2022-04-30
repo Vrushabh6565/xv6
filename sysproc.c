@@ -7,6 +7,7 @@
 #include "mmu.h"
 #include "proc.h"
 extern int mmap1(int, int, int);
+extern int munmap1(int);
 int
 sys_fork(void)
 {
@@ -98,7 +99,16 @@ sys_mmap(void)
 	int offset = -1;
 
 	if(argint(0, &length) < 0 || argint(1, &fd) < 0 || argint(2, &offset) < 0)
-	return -1;
+		return -1;
+	cprintf("all ok\n");
 	return mmap1(length, fd, offset);
 }
 
+int
+sys_munmap(void)
+{
+	int addr;
+	if(argint(0, &addr) < 0)
+		return -1;
+	return munmap1(addr);
+}

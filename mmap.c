@@ -3,18 +3,19 @@
 #include "user.h"
 #include "fcntl.h"
 int main(void) {
+	char buff[256], buff1[256];
 	int fd = open("mmaptest.txt", O_RDWR);
 	printf(1,"==>%d\n", fd);
 	char *addr = (char *) mmap(10,fd,0);
-	char buff[256];
+	char *addr1 = (char *) mmap(5,fd,0);
+	printf(1,"mmap addr = > %s %s\n", &addr, &addr1);
+	strcpy(buff, addr);
+	strcpy(buff1, addr1);
+	printf(1, "==%s==%s\n", buff,buff1);
+	printf(1,"unmap==> %d\n",munmap((int)addr));
   	strcpy(buff, addr);
-  	printf(1, "%s\n", (char*)buff);
-  	char buff2[256];
-  	read(fd, buff2, 5);
-  	printf(1, "%s\n", (char*)buff2);
-  	char buff3[256];
-  	read(fd, buff3, 2);
-  	printf(1, "%s\n", (char*)buff3);
+  	printf(1, "==%s==\n", buff);
+  	close(fd);
 	exit();
 }
 

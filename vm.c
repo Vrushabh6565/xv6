@@ -423,6 +423,28 @@ int map_pages(struct proc *p, int i) {
 	p->mmaps[i].used = 1;
 	return 1;
 }
+
+int unmap_pages(struct proc *p, int index) {
+	char *va = p->mmaps[index].addr;
+	int l = p->mmaps[index].length;
+	int count_pg = 0;
+	pte_t *pte;
+	uint pa;
+	char *v;
+	while(l > 0) {
+			pte = walkpgdir(p->pgdir, va, 0);
+			pa = PTE_ADDR(*pte);
+			v = P2V(pa);
+			kfree(v);
+			va = va + PGSIZE;
+			l = l - PGSIZE;
+			count_pg++;
+	}
+	if(p->mmap_base == (int)va)
+		p->mmap_base = p->mmap_base + count_pg*PGSIZE;
+	p->mmaps[index].used = 0;
+	return 1;
+}
 //PAGEBREAK!
 // Blank page.
 //PAGEBREAK!

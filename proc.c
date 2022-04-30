@@ -567,3 +567,17 @@ int set_mmap(int length, int fd, int offset) {
 	}
 	return -1;
 }
+
+int munmap1(int addr, int length) {
+	struct proc *p = myproc();
+	int unmap_i = 0;
+	for(; unmap_i < MAPSIZE; unmap_i++) {
+		if(addr == (int)p->mmaps[unmap_i].addr)
+			break;
+		else
+			continue;
+	}
+	if(unmap_i == MAPSIZE)
+		return -1;
+	return unmap_pages(p, unmap_i);
+}
