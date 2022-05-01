@@ -100,7 +100,6 @@ sys_mmap(void)
 
 	if(argint(0, &length) < 0 || argint(1, &fd) < 0 || argint(2, &offset) < 0)
 		return -1;
-	cprintf("all ok\n");
 	return mmap1(length, fd, offset);
 }
 

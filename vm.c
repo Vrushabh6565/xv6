@@ -401,7 +401,7 @@ int map_pages(struct proc *p, int i) {
 	int read = 0; 
 	while(j < pg_req) {
 		pa[j] = kalloc();
-		if(mappages(p->pgdir,va, PGSIZE, (uint)V2P(pa[j]), PTE_W | PTE_U) < 0) {
+		if(mappages(p->pgdir,va, PGSIZE, (uint)V2P(pa[j]), PTE_P | PTE_W | PTE_U) < 0) {
 			panic("mmap map_pages()");
 		}
 		memset(pa[j], 0, PGSIZE);
@@ -432,16 +432,20 @@ int unmap_pages(struct proc *p, int index) {
 	uint pa;
 	char *v;
 	while(l > 0) {
-			pte = walkpgdir(p->pgdir, va, 0);
-			pa = PTE_ADDR(*pte);
-			v = P2V(pa);
-			kfree(v);
-			va = va + PGSIZE;
-			l = l - PGSIZE;
-			count_pg++;
+		pte = walkpgdir(p->pgdir, va, 0);
+		pa = PTE_ADDR(*pte);
+		if(pa == 0)
+			panic("unmap_pages: page not present");
+		v = P2V(pa);
+		kfree(v);
+		va = va + PGSIZE;
+		l = l - PGSIZE;
+		*pte &= ~PTE_P;
+		pte = 0;
+		count_pg++;
 	}
-	if(p->mmap_base == (int)va)
-		p->mmap_base = p->mmap_base + count_pg*PGSIZE;
+	/*if(p->mmap_base == (int)va)
+		p->mmap_base = p->mmap_base + count_pg*PGSIZE;*/
 	p->mmaps[index].used = 0;
 	return 1;
 }
