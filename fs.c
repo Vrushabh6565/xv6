@@ -463,6 +463,7 @@ readi(struct inode *ip, char *dst, uint off, uint n)
 {
   uint tot, m;
   struct buf *bp;
+
   if(ip->type == T_DEV){
     if(ip->major < 0 || ip->major >= NDEV || !devsw[ip->major].read)
       return -1;
@@ -473,6 +474,7 @@ readi(struct inode *ip, char *dst, uint off, uint n)
     return -1;
   if(off + n > ip->size)
     n = ip->size - off;
+
   struct proc *p = myproc();
   struct file *f;
   int i = 0;

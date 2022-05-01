@@ -6,6 +6,7 @@
 #include "memlayout.h"
 #include "mmu.h"
 #include "proc.h"
+
 extern int mmap1(int, int, int);
 extern int munmap1(int);
 int

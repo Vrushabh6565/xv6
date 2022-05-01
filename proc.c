@@ -241,6 +241,7 @@ exit(void)
       curproc->ofile[fd] = 0;
     }
   }
+  
   for(int i = 0; i < MAPSIZE; i++) {
   	if(curproc->mmaps[i].used) {
 	  munmap1((int)curproc->mmaps[i].addr);

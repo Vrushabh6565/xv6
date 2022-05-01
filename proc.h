@@ -54,6 +54,7 @@ struct proc {
   struct mmapinfo mmaps[MAPSIZE]; //Max MAPSIZE mapping possible
   uint mmap_base;			   //virtual addresss above which mmap is done
 };
+
 int mmap1(int length, int fd, int offset);
 int set_mmap(int length, int fd, int offset);
 int map_pages(struct proc *p, int i);
