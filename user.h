@@ -25,6 +25,7 @@ int sleep(int);
 int uptime(void);
 int mmap(int, int, int);
 int munmap(int);
+int lseek(int, int, int);
 
 // ulib.c
 int stat(const char*, struct stat*);

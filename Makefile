@@ -197,7 +197,7 @@ clean:
 
 # make a printout
 FILES = $(shell grep -v '^\#' runoff.list)
-PRINT = runoff.list runoff.spec README mmaptest.txt toc.hdr toc.ftr $(FILES)
+PRINT = runoff.list runoff.spec README toc.hdr toc.ftr mmaptest.txt $(FILES)
 
 xv6.pdf: $(PRINT)
 	./runoff
@@ -253,7 +253,7 @@ EXTRA=\
 	ln.c ls.c mkdir.c rm.c stressfs.c usertests.c wc.c zombie.c\
 	printf.c umalloc.c\
 	mmaptest.c\
-	README mmaptest.txt dot-bochsrc *.pl toc.* runoff runoff1 runoff.list\
+	README dot-bochsrc *.pl toc.* runoff runoff1 runoff.list mmaptest.txt\
 	.gdbinit.tmpl gdbutil\
 
 dist:

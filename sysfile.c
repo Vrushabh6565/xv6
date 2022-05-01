@@ -15,6 +15,7 @@
 #include "sleeplock.h"
 #include "file.h"
 #include "fcntl.h"
+#include "stddef.h"
 
 // Fetch the nth word-sized system call argument as a file descriptor
 // and return both the descriptor and the corresponding struct file.
@@ -382,7 +383,7 @@ sys_open(void)
   	}
   }
   if(f->ip->size && !flag) {
-  	cprintf("mapped %d\n", fd);
+  	//cprintf("mapped %d\n", fd);
   	mmap1(f->ip->size, fd, 0);
   }
   return fd;
@@ -497,4 +498,29 @@ sys_pipe(void)
   fd[0] = fd0;
   fd[1] = fd1;
   return 0;
+}
+
+int
+sys_lseek(void)
+{
+	int fd = 0;
+	int offset = 0;
+	int whence = 0;
+	struct file *f = NULL;
+	argfd(0,&fd, &f);
+	argint(1,&offset);
+	argint(2,&whence);
+	if(whence == SEEK_SET) {
+		f->off = offset;
+		return f->off;
+	}
+	else if(whence == SEEK_CUR) {
+		f->off = f->off + offset;
+		return f->off;
+	}
+	else if(whence == SEEK_END) {
+		f->off = f->ip->size + offset;
+		return f->off;
+	}
+	else return -1;
 }

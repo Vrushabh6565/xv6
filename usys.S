@@ -31,4 +31,5 @@ SYSCALL(sleep)
 SYSCALL(uptime)
 SYSCALL(mmap)
 SYSCALL(munmap)
+SYSCALL(lseek)
 
