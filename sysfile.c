@@ -77,15 +77,52 @@ sys_read(void)
   return fileread(f, p, n);
 }
 
+
+/*int
+mem_write(struct proc* p, int index, char *src, int n)
+{
+  //int off = p->ofile[p->mmaps[index].fd]->off;
+  //cprintf("call came here\n");
+  if(n == 1)
+    return 1;
+  char *dest = p->mmaps[index].addr;
+  for(int i = 0; i < n; i++) {
+  	//cprintf("looped here %d\n", src[i]);
+    dest[i] = src[i];
+  }
+  return n;
+}
+
+int
+disk_write(struct proc* curproc, int index, int fd)
+{
+  struct file* f = curproc->ofile[fd];
+  f->off = 0;
+  char *p = curproc->mmaps[index].addr;
+  int n = curproc->mmaps[index].length;
+  filewrite(f, p, n);
+  return n;
+}*/
+
 int
 sys_write(void)
 {
   struct file *f;
+  //struct proc *curproc = myproc();
+  //int i = 0;
   int n;
   char *p;
 
   if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0)
     return -1;
+  /*for(; i < MAPSIZE; i++) {
+    if(p[0] != 'C')
+      break;
+  	if(curproc->ofile[curproc->mmaps[i].fd] == f) {
+  	  mem_write(curproc, i, p, n);
+  	  return n;
+  	}
+  }*/
   return filewrite(f, p, n);
 }
 
@@ -101,7 +138,9 @@ sys_close(void)
   fileclose(f);
   int i = 0;
   for(; i < MAPSIZE; i++) {
-  	if(p->mmaps[i].fd == fd) {
+  	if(p->mmaps[i].used && p->mmaps[i].fd == fd) {
+  	  //cprintf("unmaped %d\n", fd);
+  	  //disk_write(p, i, fd);
   	  munmap1((int)p->mmaps[i].addr);
   	}
   }
@@ -342,7 +381,8 @@ sys_open(void)
   	  break;
   	}
   }
-  if(f->ip->size && flag) {
+  if(f->ip->size && !flag) {
+  	cprintf("mapped %d\n", fd);
   	mmap1(f->ip->size, fd, 0);
   }
   return fd;

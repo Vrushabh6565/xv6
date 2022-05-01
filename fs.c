@@ -449,14 +449,14 @@ stati(struct inode *ip, struct stat *st)
 //PAGEBREAK!
 // Read data from inode.
 // Caller must hold ip->lock.
-int ip2fd(struct proc *p, struct inode *ip) {
+/*int ip2fd(struct proc *p, struct inode *ip) {
   int fd = 0;
   for(; fd < NOFILE; fd++) {
     if(ip == p->ofile[fd]->ip)
   	  break;
   	}
 	return fd;
-}
+}*/
 
 int
 readi(struct inode *ip, char *dst, uint off, uint n)
@@ -488,6 +488,7 @@ readi(struct inode *ip, char *dst, uint off, uint n)
     	continue;
     }
     memmove(dst, p->mmaps[i].addr + off, n);
+    //cprintf("memread\n");
     return n;
   }
   /*int fd = ip2fd(p, ip);

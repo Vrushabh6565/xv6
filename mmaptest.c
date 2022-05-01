@@ -3,7 +3,7 @@
 #include "user.h"
 #include "fcntl.h"
 int main(void) {
-	char buff1[256], buff3[256];
+	char buff[256], buff1[256], buff3[256];
 	int fd = open("mmaptest.txt", O_RDWR);
 	printf(1,"hello\n");
 	read(fd, buff1, 17);
