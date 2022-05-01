@@ -241,7 +241,13 @@ exit(void)
       curproc->ofile[fd] = 0;
     }
   }
-
+  for(int i = 0; i < MAPSIZE; i++) {
+  	if(curproc->mmaps[i].used) {
+	  munmap1((int)curproc->mmaps[i].addr);
+  	}
+  	else
+  	  continue;
+  }
   begin_op();
   iput(curproc->cwd);
   end_op();
@@ -568,7 +574,7 @@ int set_mmap(int length, int fd, int offset) {
 	return -1;
 }
 
-int munmap1(int addr, int length) {
+int munmap1(int addr) {
 	struct proc *p = myproc();
 	int unmap_i = 0;
 	for(; unmap_i < MAPSIZE; unmap_i++) {
@@ -579,5 +585,15 @@ int munmap1(int addr, int length) {
 	}
 	if(unmap_i == MAPSIZE)
 		return -1;
-	return unmap_pages(p, unmap_i);
+	int ret = unmap_pages(p, unmap_i);
+	unset_mmap(p, unmap_i);
+	return ret;
+}
+
+int unset_mmap(struct proc *p, int unmap_i) {
+	p->mmaps[unmap_i].used = 0;
+	p->mmaps[unmap_i].length = 0;
+	p->mmaps[unmap_i].offset = 0;
+	p->mmaps[unmap_i].fd = -1;
+	return 1;
 }

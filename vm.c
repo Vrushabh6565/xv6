@@ -444,8 +444,8 @@ int unmap_pages(struct proc *p, int index) {
 		pte = 0;
 		count_pg++;
 	}
-	/*if(p->mmap_base == (int)va)
-		p->mmap_base = p->mmap_base + count_pg*PGSIZE;*/
+	if(p->mmap_base == (int)va)
+		p->mmap_base = p->mmap_base + count_pg*PGSIZE;
 	p->mmaps[index].used = 0;
 	return 1;
 }

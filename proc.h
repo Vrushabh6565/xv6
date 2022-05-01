@@ -54,9 +54,12 @@ struct proc {
   struct mmapinfo mmaps[MAPSIZE]; //Max MAPSIZE mapping possible
   uint mmap_base;			   //virtual addresss above which mmap is done
 };
+int mmap1(int length, int fd, int offset);
 int set_mmap(int length, int fd, int offset);
 int map_pages(struct proc *p, int i);
+int munmap1(int addr);
 int unmap_pages(struct proc *p, int i);
+int unset_mmap(struct proc* p, int unmap_i);
 // Process memory is laid out contiguously, low addresses first:
 //   text
 //   original data and bss

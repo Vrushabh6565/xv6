@@ -449,6 +449,15 @@ stati(struct inode *ip, struct stat *st)
 //PAGEBREAK!
 // Read data from inode.
 // Caller must hold ip->lock.
+int ip2fd(struct proc *p, struct inode *ip) {
+  int fd = 0;
+  for(; fd < NOFILE; fd++) {
+    if(ip == p->ofile[fd]->ip)
+  	  break;
+  	}
+	return fd;
+}
+
 int
 readi(struct inode *ip, char *dst, uint off, uint n)
 {
@@ -478,11 +487,20 @@ readi(struct inode *ip, char *dst, uint off, uint n)
     if(p->mmaps[i].offset > off || p->mmaps[i].offset + p->mmaps[i].length < off + n) {
     	continue;
     }
-	cprintf("directly reading from memory\n");
-    memmove(dst, p->mmaps[i].addr, n);
+    memmove(dst, p->mmaps[i].addr + off, n);
     return n;
   }
-  
+  /*int fd = ip2fd(p, ip);
+  int skp_mmap = 0;
+  for(;skp_mmap < MAPSIZE; skp_mmap++) {
+  	if((p->mmaps[skp_mmap].used == 0) && p->mmaps[skp_mmap].fd != -1)
+  	  break;
+  }
+  if(skp_mmap >= MAPSIZE) {
+  	cprintf("reached here\n");
+  	mmap1(n, fd, off);
+  	return n;
+  }*/
   for(tot=0; tot<n; tot+=m, off+=m, dst+=m){
     bp = bread(ip->dev, bmap(ip, off/BSIZE));
     m = min(n - tot, BSIZE - off%BSIZE);

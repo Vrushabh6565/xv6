@@ -9,7 +9,6 @@
 #include "spinlock.h"
 #include "sleeplock.h"
 #include "file.h"
-extern int mmap1(int, int, int);
 
 struct devsw devsw[NDEV];
 struct {

@@ -94,11 +94,17 @@ sys_close(void)
 {
   int fd;
   struct file *f;
-
+  struct proc *p = myproc();
   if(argfd(0, &fd, &f) < 0)
     return -1;
   myproc()->ofile[fd] = 0;
   fileclose(f);
+  int i = 0;
+  for(; i < MAPSIZE; i++) {
+  	if(p->mmaps[i].fd == fd) {
+  	  munmap1((int)p->mmaps[i].addr);
+  	}
+  }
   return 0;
 }
 
@@ -328,6 +334,17 @@ sys_open(void)
   f->off = 0;
   f->readable = !(omode & O_WRONLY);
   f->writable = (omode & O_WRONLY) || (omode & O_RDWR);
+  int i = 0, flag = 0;
+  struct proc* p = myproc();
+  for(; i < MAPSIZE; i++) {
+  	if(p->mmaps[i].fd == fd) {
+  	  flag = 1;
+  	  break;
+  	}
+  }
+  if(f->ip->size && flag) {
+  	mmap1(f->ip->size, fd, 0);
+  }
   return fd;
 }
 
